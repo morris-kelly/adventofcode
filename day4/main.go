@@ -35,6 +35,7 @@ func main() {
 	toRemove := make([]point, 0)
 
 	for runAgain {
+		// set to false, will be set to true if any rolls are removed this iteration
 		runAgain = false
 
 		// iterate over the grid
@@ -50,7 +51,7 @@ func main() {
 						case 0:
 							countNeighbours := 0
 							// first char, first row, only neighbours are right and down
-							neighbours := []rune{rune(row[j+1]), rune(rows[i+1][j]), rune(rows[i+1][j+1])}
+							neighbours := []rune{rune(grid[i][j+1]), rune(grid[i+1][j]), rune(grid[i+1][j+1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -62,7 +63,7 @@ func main() {
 						case len(row) - 1:
 							countNeighbours := 0
 							// last char, first row, only neighbours are left and down
-							neighbours := []rune{rune(row[j-1]), rune(rows[i+1][j]), rune(rows[i+1][j-1])}
+							neighbours := []rune{rune(grid[i][j-1]), rune(grid[i+1][j]), rune(grid[i+1][j-1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -74,7 +75,7 @@ func main() {
 						default:
 							countNeighbours := 0
 							// middle char, first row, only neighbours are left, right and down
-							neighbours := []rune{rune(row[j-1]), rune(row[j+1]), rune(rows[i+1][j-1]), rune(rows[i+1][j]), rune(rows[i+1][j+1])}
+							neighbours := []rune{rune(grid[i][j-1]), rune(grid[i][j+1]), rune(grid[i+1][j-1]), rune(grid[i+1][j]), rune(grid[i+1][j+1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -97,7 +98,7 @@ func main() {
 						case 0:
 							countNeighbours := 0
 							// first char, last row, only neighbours are right and up
-							neighbours := []rune{rune(row[j+1]), rune(rows[i-1][j]), rune(rows[i-1][j+1])}
+							neighbours := []rune{rune(grid[i][j+1]), rune(grid[i-1][j]), rune(grid[i-1][j+1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -109,7 +110,7 @@ func main() {
 						case len(row) - 1:
 							countNeighbours := 0
 							// last char, last row, only neighbours are left and up
-							neighbours := []rune{rune(row[j-1]), rune(rows[i-1][j]), rune(rows[i-1][j-1])}
+							neighbours := []rune{rune(grid[i][j-1]), rune(grid[i-1][j]), rune(grid[i-1][j-1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -121,7 +122,7 @@ func main() {
 						default:
 							countNeighbours := 0
 							// middle char, last row, only neighbours are left, right and up
-							neighbours := []rune{rune(row[j-1]), rune(row[j+1]), rune(rows[i-1][j-1]), rune(rows[i-1][j]), rune(rows[i-1][j+1])}
+							neighbours := []rune{rune(grid[i][j-1]), rune(grid[i][j+1]), rune(grid[i-1][j-1]), rune(grid[i-1][j]), rune(grid[i-1][j+1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -144,7 +145,7 @@ func main() {
 						case 0:
 							countNeighbours := 0
 							// first char, middle row, only neighbours are right, up and down
-							neighbours := []rune{rune(row[j+1]), rune(rows[i-1][j]), rune(rows[i-1][j+1]), rune(rows[i+1][j]), rune(rows[i+1][j+1])}
+							neighbours := []rune{rune(grid[i][j+1]), rune(grid[i-1][j]), rune(grid[i-1][j+1]), rune(grid[i+1][j]), rune(grid[i+1][j+1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -156,7 +157,7 @@ func main() {
 						case len(row) - 1:
 							countNeighbours := 0
 							// last char, middle row, only neighbours are left, up and down
-							neighbours := []rune{rune(row[j-1]), rune(rows[i-1][j]), rune(rows[i-1][j-1]), rune(rows[i+1][j]), rune(rows[i+1][j-1])}
+							neighbours := []rune{rune(grid[i][j-1]), rune(grid[i-1][j]), rune(grid[i-1][j-1]), rune(grid[i+1][j]), rune(grid[i+1][j-1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -168,7 +169,7 @@ func main() {
 						default:
 							countNeighbours := 0
 							// middle char, middle row, all neighbours
-							neighbours := []rune{rune(row[j-1]), rune(row[j+1]), rune(rows[i-1][j-1]), rune(rows[i-1][j]), rune(rows[i-1][j+1]), rune(rows[i+1][j-1]), rune(rows[i+1][j]), rune(rows[i+1][j+1])}
+							neighbours := []rune{rune(grid[i][j-1]), rune(grid[i][j+1]), rune(grid[i-1][j-1]), rune(grid[i-1][j]), rune(grid[i-1][j+1]), rune(grid[i+1][j-1]), rune(grid[i+1][j]), rune(grid[i+1][j+1])}
 							for _, n := range neighbours {
 								if n == roll {
 									countNeighbours++
@@ -184,16 +185,17 @@ func main() {
 				}
 			}
 		}
+		fmt.Println("number to be removed", len(toRemove))
 
 		for _, p := range toRemove {
 			runAgain = true
 			answer++
 
-			fmt.Println("removing roll at", p)
 			grid[p.i][p.j] = empty
 		}
+
 		toRemove = make([]point, 0)
-		fmt.Println("answer", answer)
+
 	}
 
 	fmt.Println("answer", answer)
