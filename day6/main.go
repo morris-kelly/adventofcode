@@ -18,11 +18,13 @@ func main() {
 	signs := []string{}
 	answers := []int{}
 
+	grid := [][]string{}
+
 	split := strings.Split(data, "\n")
 	slices.Reverse(split)
 	for i, v := range split {
+
 		nums := strings.Split(v, " ")
-		fmt.Println("nums ", nums)
 		switch i {
 		case 0:
 			// the signs are on line 1 now
@@ -34,39 +36,60 @@ func main() {
 					answers = append(answers, 0)
 				}
 			}
+
+			// store length for later
 			length = len(signs)
+
 		default:
 			temp := []string{}
+			maxLength := 0
+
 			// we now have numbers, so use the sign and do the maths
 			for _, v := range nums {
 				if v != "" {
 					temp = append(temp, v)
+					if len(v) > maxLength {
+						maxLength = len(v)
+					}
 				}
 			}
 			if len(temp) != length {
 				panic("lengths don't match")
 			}
+			grid = append(grid, temp)
 
-			for i := range length {
-				switch signs[i] {
-				case "+":
-					num := 0
-					fmt.Sscanf(temp[i], "%d", &num)
-					answers[i] += num
-				case "*":
-					num := 0
-					fmt.Sscanf(temp[i], "%d", &num)
-					if answers[i] == 0 {
-						answers[i] = 1
-					}
-					answers[i] *= num
-				default:
-					panic("unknown sign " + signs[i])
-				}
-			}
 		}
 
 	}
+
+	// now we have the grid, we can process it
+	// loop through each column and find the longest number
+	for col := 0; col < length; col++ {
+		maxLength := 0
+		for row := range grid {
+			if len(grid[row][col]) > maxLength {
+				maxLength = len(grid[row][col])
+			}
+		}
+		fmt.Println("max length", maxLength)
+
+		temp := []string{}
+		for row := 0; row < len(grid); row++ {
+			number := ""
+			// use the max length, count down and build the number
+			for i := maxLength - 1; i >= 0; i-- {
+				if len(grid[row][col]) <= i {
+					continue
+				}
+				number += string(grid[row][col][i])
+				fmt.Println("number", number)
+			}
+			temp = append(temp, number)
+		}
+		fmt.Println("temp", temp)
+	}
+
+	// finally, sum the answers
 	finalAnswer := 0
 	for _, answer := range answers {
 		finalAnswer += answer
